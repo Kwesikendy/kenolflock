@@ -41,9 +41,10 @@ const DEFAULT_SETTINGS: ChurchSettings = {
   autoDonationReceipt: true
 };
 
-// Helper to check if we are using the placeholder Firestore API key
+// Helper to check if we are using placeholder/unset Firebase credentials
 export function isPlaceholderFirebase(): boolean {
-  return !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY.includes("PlaceholderKey");
+  const key = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "";
+  return !key || key === "YOUR_API_KEY" || key.includes("Placeholder");
 }
 
 // Trigger browser-wide reactive event when local data changes
