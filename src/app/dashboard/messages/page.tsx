@@ -127,7 +127,7 @@ export default function MessagesPage() {
     <div className="animate-fade-in flex-col gap-8" style={{ display: "flex", paddingBottom: "3rem" }}>
       
       {/* Header Bar */}
-      <div style={{ display: "flex", alignItems: "center", justify: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#FF5A43", fontSize: "0.75rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>
             <Radio size={14} className="animate-pulse" /> Moolre Bulk SMS Command Center
@@ -237,7 +237,7 @@ export default function MessagesPage() {
             {/* Row 1: Sender ID & Campaign Title */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "1.25rem" }}>
               <div>
-                <label style={{ display: "flex", alignItems: "center", justify: "space-between", fontSize: "0.8rem", fontWeight: 700, color: "#E2E8F0", marginBottom: "0.5rem" }}>
+                <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8rem", fontWeight: 700, color: "#E2E8F0", marginBottom: "0.5rem" }}>
                   <span>SENDER ID</span>
                   <span style={{ fontSize: "0.7rem", color: "#FACC15" }}>Whitelisted</span>
                 </label>
@@ -318,7 +318,7 @@ export default function MessagesPage() {
 
             {/* Message Textarea & Cost Indicator */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", justify: "space-between", marginBottom: "0.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                 <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#E2E8F0" }}>ANNOUNCEMENT MESSAGE</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", fontSize: "0.78rem" }}>
                   <span style={{ color: charCount > 160 ? "#FACC15" : "#94A3B8" }}>
@@ -340,7 +340,7 @@ export default function MessagesPage() {
             </div>
 
             {/* Simulation Toggle Box */}
-            <div style={{ display: "flex", alignItems: "center", justify: "space-between", padding: "1rem 1.25rem", background: simulate ? "rgba(96, 165, 250, 0.08)" : "rgba(255, 90, 67, 0.08)", border: `1px solid ${simulate ? "rgba(96, 165, 250, 0.25)" : "rgba(255, 90, 67, 0.25)"}`, borderRadius: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", background: simulate ? "rgba(96, 165, 250, 0.08)" : "rgba(255, 90, 67, 0.08)", border: `1px solid ${simulate ? "rgba(96, 165, 250, 0.25)" : "rgba(255, 90, 67, 0.25)"}`, borderRadius: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
                 <input
                   type="checkbox"
@@ -367,7 +367,7 @@ export default function MessagesPage() {
             <button
               type="submit"
               disabled={loading}
-              style={{ width: "100%", padding: "1.15rem", borderRadius: "16px", background: loading ? "#334155" : "linear-gradient(135deg, #FF5A43 0%, #D9381E 100%)", color: "#FFFFFF", fontSize: "1.05rem", fontWeight: 800, border: "none", cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justify: "center", gap: "0.6rem", boxShadow: "0 10px 25px -5px rgba(255, 90, 67, 0.4)", transition: "all 0.2s" }}
+              style={{ width: "100%", padding: "1.15rem", borderRadius: "16px", background: loading ? "#334155" : "linear-gradient(135deg, #FF5A43 0%, #D9381E 100%)", color: "#FFFFFF", fontSize: "1.05rem", fontWeight: 800, border: "none", cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem", boxShadow: "0 10px 25px -5px rgba(255, 90, 67, 0.4)", transition: "all 0.2s" }}
             >
               {loading ? (
                 <>

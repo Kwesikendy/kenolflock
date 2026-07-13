@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { 
-  ShieldAlert, Info, Sparkles, CheckCircle2, Send, MessageSquare, 
+  ShieldAlert, Sparkles, CheckCircle2, Send, MessageSquare, 
   Smartphone, Zap, AlertCircle, RefreshCw, Copy, Check, Radio, FileText
 } from 'lucide-react';
 
@@ -98,7 +98,7 @@ export default function SmsTestPage() {
       <div style={{ maxWidth: "760px", margin: "0 auto" }}>
         
         {/* Navigation & Header Banner */}
-        <div style={{ display: "flex", alignItems: "center", justify: "space-between", marginBottom: "2.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "#FF5A43", fontSize: "0.75rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>
               <Radio size={14} className="animate-pulse" /> Moolre VAS Gateway &bull; Live Diagnostic
@@ -218,7 +218,7 @@ export default function SmsTestPage() {
 
             {/* Message Textarea & Live Calculator */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", justify: "space-between", marginBottom: "0.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                 <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#E2E8F0" }}>MESSAGE CONTENT</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", fontSize: "0.78rem" }}>
                   <span style={{ color: charCount > 160 ? "#FACC15" : "#94A3B8" }}>
@@ -240,7 +240,7 @@ export default function SmsTestPage() {
             </div>
 
             {/* Simulation Toggle Box */}
-            <div style={{ display: "flex", alignItems: "center", justify: "space-between", padding: "1rem 1.25rem", background: simulate ? "rgba(96, 165, 250, 0.08)" : "rgba(255, 90, 67, 0.08)", border: `1px solid ${simulate ? "rgba(96, 165, 250, 0.25)" : "rgba(255, 90, 67, 0.25)"}`, borderRadius: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 1.25rem", background: simulate ? "rgba(96, 165, 250, 0.08)" : "rgba(255, 90, 67, 0.08)", border: `1px solid ${simulate ? "rgba(96, 165, 250, 0.25)" : "rgba(255, 90, 67, 0.25)"}`, borderRadius: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
                 <input
                   type="checkbox"
@@ -267,7 +267,7 @@ export default function SmsTestPage() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              style={{ width: "100%", padding: "1.1rem", borderRadius: "16px", background: status === 'loading' ? "#334155" : "linear-gradient(135deg, #FF5A43 0%, #D9381E 100%)", color: "#FFFFFF", fontSize: "1.05rem", fontWeight: 800, border: "none", cursor: status === 'loading' ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justify: "center", gap: "0.6rem", boxShadow: "0 10px 25px -5px rgba(255, 90, 67, 0.4)", transition: "all 0.2s" }}
+              style={{ width: "100%", padding: "1.1rem", borderRadius: "16px", background: status === 'loading' ? "#334155" : "linear-gradient(135deg, #FF5A43 0%, #D9381E 100%)", color: "#FFFFFF", fontSize: "1.05rem", fontWeight: 800, border: "none", cursor: status === 'loading' ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.6rem", boxShadow: "0 10px 25px -5px rgba(255, 90, 67, 0.4)", transition: "all 0.2s" }}
             >
               {status === 'loading' ? (
                 <>
@@ -284,7 +284,7 @@ export default function SmsTestPage() {
           {/* Response Box */}
           {responseMsg && (
             <div style={{ marginTop: "2rem", padding: "1.5rem", borderRadius: "18px", background: status === 'success' ? "rgba(16, 185, 129, 0.08)" : "rgba(239, 68, 68, 0.08)", border: `1px solid ${status === 'success' ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"}` }}>
-              <div style={{ display: "flex", alignItems: "center", justify: "space-between", marginBottom: "0.75rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "1rem", fontWeight: 800, color: status === 'success' ? "#34D399" : "#F87171" }}>
                   {status === 'success' ? <CheckCircle2 size={22} /> : <AlertCircle size={22} />}
                   {status === 'success' ? "Transmission Successful" : "Transmission Gateway Error"}
@@ -302,23 +302,6 @@ export default function SmsTestPage() {
               </pre>
             </div>
           )}
-        </div>
-
-        {/* Diagnostic Guide Footer */}
-        <div style={{ marginTop: "2.5rem", padding: "1.75rem", borderRadius: "24px", background: "rgba(30, 41, 59, 0.5)", border: "1px solid rgba(255, 255, 255, 0.06)", display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "#FACC15", fontWeight: 800, fontSize: "0.95rem" }}>
-            <Info size={20} /> Moolre Regulatory & Whitelist Cheat-Sheet (`ASMS07` / `AIN11`)
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.25rem", fontSize: "0.84rem", color: "#CBD5E1", lineHeight: 1.6 }}>
-            <div style={{ background: "rgba(15, 23, 42, 0.6)", padding: "1.2rem", borderRadius: "16px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-              <div style={{ fontWeight: 700, color: "#FFFFFF", marginBottom: "0.4rem" }}>1. Why Sender IDs Need Approval (`ASMS07`)</div>
-              National telecom networks across Ghana require all custom sender headers (`KenolFlock`) to be registered under your company profile on <a href="https://app.moolre.com" target="_blank" rel="noopener noreferrer" style={{ color: "#60A5FA", textDecoration: "underline" }}>app.moolre.com</a> to prevent phishing. Enter any approved ID above!
-            </div>
-            <div style={{ background: "rgba(15, 23, 42, 0.6)", padding: "1.2rem", borderRadius: "16px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-              <div style={{ fontWeight: 700, color: "#FFFFFF", marginBottom: "0.4rem" }}>2. JWT VAS Gateway Token (`vasid: 9533`)</div>
-              Your primary authentication JWT (`vasid: 9533`) is already embedded with dual `GET` + `POST` auto-retry protocols, ensuring instant connection to Moolre's messaging backbone.
-            </div>
-          </div>
         </div>
 
       </div>
