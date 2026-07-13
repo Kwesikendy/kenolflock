@@ -1,7 +1,9 @@
 export async function sendSms(recipient: string, message: string, simulate: boolean = false) {
-  // Use user's exact JWT VAS API key as the primary fallback if environment variable is not explicitly set
+  // Use user's exact JWT VAS API key as the primary fallback if environment variable is not explicitly set to a JWT
   const defaultVasKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2YXNpZCI6OTUzMywiZXhwIjoxOTU2NTI3OTk5fQ.Xak84Z8Rqwdp6eofQL2mixy-LhQaMNVJz2CRFWfpS0o';
-  const apiKey = process.env.MOOLRE_SMS_KEY || process.env.MOOLRE_VAS_KEY || defaultVasKey;
+  const rawEnvKey = process.env.MOOLRE_SMS_KEY || process.env.MOOLRE_VAS_KEY || process.env.MOORLE_SMS_KEY;
+  // If env variable contains a merchant payment UUID (like 14a3f654-...), ignore it and use the real JWT VAS token
+  const apiKey = (rawEnvKey && rawEnvKey.startsWith('eyJ')) ? rawEnvKey : defaultVasKey;
   const senderId = process.env.MOOLRE_SENDER_ID || 'KenolFlock';
   const isProduction = process.env.NODE_ENV === 'production' || process.env.MOOLRE_ENV === 'production';
 
