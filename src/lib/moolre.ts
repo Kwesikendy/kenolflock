@@ -1,7 +1,18 @@
-export async function sendSms(recipient: string, message: string) {
-  const apiKey = process.env.MOOLRE_SMS_KEY || process.env.MOOLRE_SECRET_KEY || process.env.MOORLE_SMS_KEY;
+export async function sendSms(recipient: string, message: string, simulate: boolean = false) {
+  const apiKey = process.env.MOOLRE_SMS_KEY || process.env.MOOLRE_VAS_KEY || process.env.MOOLRE_SECRET_KEY || process.env.MOORLE_SMS_KEY;
   const senderId = process.env.MOOLRE_SENDER_ID || 'KenolFlock';
   const isProduction = process.env.NODE_ENV === 'production' || process.env.MOOLRE_ENV === 'production';
+
+  if (simulate) {
+    console.log(`[Moolre SMS Simulation Mode Forced] To: ${recipient} | Sender: ${senderId} | Msg: "${message}"`);
+    return {
+      status: true,
+      code: '100',
+      message: 'Message dispatched successfully (Simulated Sandbox Mode)',
+      messageId: `sim_sms_${Date.now()}_${Math.floor(Math.random() * 9000)}`,
+      simulated: true,
+    };
+  }
 
   // If live Moolre API key is provided, execute actual HTTP request to Moolre SMS Gateway
   if (apiKey && apiKey !== 'YOUR_MOOLRE_SMS_KEY' && !apiKey.includes('placeholder')) {
@@ -22,17 +33,34 @@ export async function sendSms(recipient: string, message: string) {
       headers: {
         'X-API-VASKEY': apiKey,
         'X-API-KEY': apiKey,
+        'X-API-SECRETKEY': apiKey,
         'Authorization': `Bearer ${apiKey}`,
+        'X-API-USER': process.env.MOOLRE_USERNAME || '',
+        'X-API-ACCOUNT': process.env.MOOLRE_ACCOUNT_NUMBER || '',
         'Accept': 'application/json',
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to send SMS via Moolre: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(`Failed to send SMS via Moolre HTTP Gateway: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    return await response.json();
+    const json = await response.json();
+
+    // Check if Moolre returned an error JSON inside HTTP 200 OK (e.g. status: 0 or code: AIN11)
+    if (json.status !== 1 && json.status !== true) {
+      const errCode = json.code || 'Moolre_Error';
+      const errMsg = json.message || 'Unknown SMS dispatch failure';
+
+      if (errCode === 'AIN11' || errMsg.toLowerCase().includes('authentication')) {
+        throw new Error(`Moolre Authentication Error (${errCode}): Your Moolre API key is not authorized for VAS SMS sending. Please ensure you generated a dedicated VAS/SMS API Key ('MOOLRE_SMS_KEY') in your Moolre dashboard, and that your account has VAS permissions enabled.`);
+      }
+
+      throw new Error(`Moolre SMS Gateway Error (${errCode}): ${errMsg}`);
+    }
+
+    return json;
   }
 
   // Graceful Demo / Sandbox Simulation (if Moolre API keys are unset)

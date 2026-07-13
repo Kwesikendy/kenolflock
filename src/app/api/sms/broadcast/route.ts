@@ -5,7 +5,7 @@ import { collection, addDoc } from 'firebase/firestore';
 
 export async function POST(request: Request) {
   try {
-    const { campaignName, targetAudience, customNumbers, message } = await request.json();
+    const { campaignName, targetAudience, customNumbers, message, simulate } = await request.json();
 
     if (!message || !campaignName) {
       return NextResponse.json(
@@ -22,7 +22,6 @@ export async function POST(request: Request) {
         .map((num: string) => num.trim())
         .filter((num: string) => num.length >= 9);
     } else if (targetAudience === 'all') {
-      // Default test numbers or placeholder representation for congregation
       recipientsList = ['233541234567']; // Sample recipient for demonstration
     } else {
       recipientsList = ['233541234567'];
@@ -32,16 +31,27 @@ export async function POST(request: Request) {
     let failCount = 0;
     const errors: string[] = [];
 
-    // Send SMS via live Moolre API
+    // Send SMS via live Moolre API or simulation
     for (const phone of recipientsList) {
       try {
-        await sendSms(phone, message);
+        await sendSms(phone, message, Boolean(simulate));
         successCount++;
       } catch (err: any) {
         console.error(`Failed sending to ${phone}:`, err);
         failCount++;
         errors.push(`${phone}: ${err.message || 'Error'}`);
       }
+    }
+
+    // If all SMS dispatches failed (e.g. Moolre AIN11 Authentication Error)
+    if (successCount === 0 && failCount > 0) {
+      return NextResponse.json(
+        {
+          error: errors[0] || 'All SMS transmissions failed via Moolre Gateway.',
+          summary: { totalRecipients: recipientsList.length, successCount, failCount },
+        },
+        { status: 400 }
+      );
     }
 
     // Attempt to log campaign in Firebase Firestore

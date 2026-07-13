@@ -4,13 +4,14 @@ import { useState } from 'react';
 import styles from './page.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Info, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function SmsTestPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [recipient, setRecipient] = useState('');
   const [message, setMessage] = useState('');
+  const [simulate, setSimulate] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [responseMsg, setResponseMsg] = useState('');
 
@@ -23,7 +24,7 @@ export default function SmsTestPage() {
       const res = await fetch('/api/sms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipient, message }),
+        body: JSON.stringify({ recipient, message, simulate }),
       });
 
       const data = await res.json();
@@ -36,7 +37,7 @@ export default function SmsTestPage() {
       setResponseMsg(JSON.stringify(data.result, null, 2));
     } catch (err: any) {
       setStatus('error');
-      setResponseMsg(err.message);
+      setResponseMsg(err.message || 'Error occurred during SMS transmission.');
     }
   };
 
@@ -68,6 +69,9 @@ export default function SmsTestPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <h1 className={styles.title}>Test SMS Integration</h1>
+        <p style={{ fontSize: "0.85rem", color: "#64748B", marginBottom: "1.5rem" }}>
+          Verify direct SMS delivery across mobile networks in Ghana via Moolre Gateway.
+        </p>
         
         <form onSubmit={handleSend}>
           <div className={styles.formGroup}>
@@ -94,25 +98,55 @@ export default function SmsTestPage() {
             />
           </div>
 
+          {/* Simulation Mode Toggle Option */}
+          <div style={{ display: "flex", itemsCenter: "center", gap: "0.6rem", margin: "0.5rem 0 1.5rem", padding: "0.85rem", backgroundColor: "rgba(255, 90, 67, 0.08)", borderRadius: "12px", border: "1px solid rgba(255, 90, 67, 0.2)" }}>
+            <input
+              type="checkbox"
+              id="simulateMode"
+              checked={simulate}
+              onChange={(e) => setSimulate(e.target.checked)}
+              style={{ width: "16px", height: "16px", accentColor: "#FF5A43", cursor: "pointer" }}
+            />
+            <label htmlFor="simulateMode" style={{ fontSize: "0.82rem", color: "#E2E8F0", cursor: "pointer", fontWeight: 600 }}>
+              Simulate SMS Dispatch (Sandbox Mode - Bypasses live Moolre VAS Gateway)
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={status === 'loading'}
             className={styles.button}
           >
-            {status === 'loading' ? 'Sending...' : 'Send SMS'}
+            {status === 'loading' ? 'Sending...' : simulate ? 'Send Simulated SMS' : 'Send Live SMS via Moolre'}
           </button>
         </form>
 
         {responseMsg && (
           <div className={`${styles.responseBox} ${status === 'success' ? styles.successBox : styles.errorBox}`}>
-            <h3 className={styles.responseTitle}>
-              {status === 'success' ? 'Success' : 'Error'}
+            <h3 className={styles.responseTitle} style={{ color: status === 'success' ? '#34D399' : '#F87171' }}>
+              {status === 'success' ? 'Transmission Successful' : 'SMS Transmission Error'}
             </h3>
-            <pre className={styles.pre}>
+            <pre className={styles.pre} style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
               {responseMsg}
             </pre>
           </div>
         )}
+
+        {/* Diagnostic Guide for AIN11 / Auth Errors */}
+        <div style={{ marginTop: "2rem", padding: "1.25rem", borderRadius: "16px", backgroundColor: "#1E293B", border: "1px solid #334155", textAlign: "left" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "#FACC15", fontWeight: 800, fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+            <Info size={18} /> Why did I get Authentication Error (`code: AIN11`)?
+          </div>
+          <p style={{ fontSize: "0.8rem", color: "#CBD5E1", lineHeight: 1.6, margin: "0 0 0.75rem" }}>
+            Moolre uses separate authorization systems for **Merchant Payments** (POS/Embed links) vs **Bulk SMS / Value Added Services (VAS)**. If you see `code: AIN11`:
+          </p>
+          <ul style={{ fontSize: "0.8rem", color: "#94A3B8", lineHeight: 1.6, paddingLeft: "1.2rem", margin: 0 }}>
+            <li>The secret key in Vercel (`14a3f654-7178-47bd-998b-dfd8b8878f3f`) is authorized for payments/checkouts, but not yet authorized for Moolre VAS SMS.</li>
+            <li><strong>How to enable Live SMS:</strong> Log into your Moolre dashboard &rarr; navigate to <strong>VAS / SMS API Gateway</strong> &rarr; generate your dedicated `MOOLRE_SMS_KEY` (and ensure your VAS wallet has SMS credit).</li>
+            <li>Add `MOOLRE_SMS_KEY` to your Vercel Environment Variables and redeploy.</li>
+            <li>Until your live VAS Key is generated, you can check the <strong>Simulate SMS Dispatch</strong> box right above to test and verify how the congregation broadcast system works!</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

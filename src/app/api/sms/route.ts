@@ -4,7 +4,7 @@ import { sendSms } from '@/lib/moolre';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { recipient, message } = body;
+    const { recipient, message, simulate } = body;
 
     if (!recipient || !message) {
       return NextResponse.json(
@@ -13,14 +13,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await sendSms(recipient, message);
+    const result = await sendSms(recipient, message, Boolean(simulate));
 
     return NextResponse.json({ success: true, result });
   } catch (error: any) {
     console.error('SMS Error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to send SMS' },
-      { status: 500 }
+      { status: 400 }
     );
   }
 }
