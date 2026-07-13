@@ -88,7 +88,22 @@ export async function createPaymentLink(params: {
     return await response.json();
   }
 
-  // Graceful Demo / Sandbox Simulation (if Moolre Public Key is unset)
+  // Check if merchant provided their direct Moolre POS Link or checkout code
+  const posLink = process.env.MOOLRE_POS_LINK || (pubKey && pubKey.includes('pos.moolre.com') ? pubKey : null);
+  if (posLink) {
+    console.log(`[Moolre POS Redirect] Redirecting to live POS link: ${posLink}`);
+    return {
+      status: true,
+      code: '200',
+      message: 'Redirecting to Moolre POS Link',
+      data: {
+        authorization_url: posLink,
+        reference: params.reference,
+      },
+    };
+  }
+
+  // Graceful Demo / Sandbox Simulation (if Moolre Public Key or POS link is unset)
   console.log(`[Moolre Payment Simulation] Reference: ${params.reference} | Amount: ${params.currency || 'GHS'} ${params.amount} | Email: ${params.email}`);
   return {
     status: true,
