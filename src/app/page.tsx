@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Phone, KeyRound, Loader2, Sparkles, ArrowRight, HeartHandshake, MessageSquare, Users, Shield, CheckCircle2 } from "lucide-react";
+import { Phone, KeyRound, Loader2, Sparkles, ArrowRight, HeartHandshake, MessageSquare, Users, CheckCircle2 } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -61,163 +61,345 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col selection:bg-primary/30" style={{ backgroundColor: "#080C14", color: "#F8FAFC" }}>
-      {/* Sleek Minimalist Header */}
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "#080C14", color: "#F8FAFC", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+      
+      {/* Top Navigation Bar with Bulletproof Explicit Spacing */}
       <header style={{
-        padding: "1.25rem 5%",
+        padding: "1.25rem 6%",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-        backdropFilter: "blur(16px)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        backdropFilter: "blur(20px)",
         position: "sticky",
         top: 0,
         zIndex: 50,
-        backgroundColor: "rgba(8, 12, 20, 0.85)"
+        backgroundColor: "rgba(8, 12, 20, 0.9)"
       }}>
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push("/")}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", cursor: "pointer" }} onClick={() => router.push("/")}>
           <div style={{
-            width: "38px", height: "38px", borderRadius: "10px",
+            width: "42px", height: "42px", borderRadius: "12px",
             background: "linear-gradient(135deg, #FF5A43 0%, #C83E2B 100%)",
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "white",
-            boxShadow: "0 4px 14px rgba(255, 90, 67, 0.3)"
+            boxShadow: "0 6px 18px rgba(255, 90, 67, 0.35)"
           }}>
-            <Sparkles size={19} />
+            <Sparkles size={22} />
           </div>
-          <div className="flex items-center gap-2.5">
-            <span className="text-xl font-extrabold tracking-tight text-white">Kenol Flock</span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider" style={{ backgroundColor: "rgba(255, 90, 67, 0.15)", color: "#FF5A43", border: "1px solid rgba(255, 90, 67, 0.3)" }}>
-              ChMS
-            </span>
+          <div>
+            <span style={{ fontSize: "1.35rem", fontWeight: 900, color: "#FFFFFF", letterSpacing: "-0.03em", display: "block", lineHeight: 1.1 }}>Kenol Flock</span>
+            <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#FF5A43", letterSpacing: "0.1em", textTransform: "uppercase", display: "block" }}>CHURCH MANAGEMENT</span>
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-10 text-sm font-medium text-slate-400">
-          <a href="#features" className="hover:text-white transition-colors">Capabilities</a>
-          <a href="#impact" className="hover:text-white transition-colors">Sanctuary Impact</a>
-          <a href="#security" className="hover:text-white transition-colors">Enterprise Security</a>
+        {/* Explicit flex gap so links never squash together */}
+        <nav style={{ display: "flex", alignItems: "center", gap: "3rem" }}>
+          <a href="#features" style={{ color: "#94A3B8", fontWeight: 600, fontSize: "0.95rem", textDecoration: "none", transition: "color 0.2s" }} onMouseOver={(e) => (e.currentTarget.style.color = "#FFFFFF")} onMouseOut={(e) => (e.currentTarget.style.color = "#94A3B8")}>Capabilities</a>
+          <a href="#impact" style={{ color: "#94A3B8", fontWeight: 600, fontSize: "0.95rem", textDecoration: "none", transition: "color 0.2s" }} onMouseOver={(e) => (e.currentTarget.style.color = "#FFFFFF")} onMouseOut={(e) => (e.currentTarget.style.color = "#94A3B8")}>Sanctuary Impact</a>
+          <a href="#security" style={{ color: "#94A3B8", fontWeight: 600, fontSize: "0.95rem", textDecoration: "none", transition: "color 0.2s" }} onMouseOver={(e) => (e.currentTarget.style.color = "#FFFFFF")} onMouseOut={(e) => (e.currentTarget.style.color = "#94A3B8")}>Enterprise Security</a>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div style={{ display: "flex", alignItems: "center", gap: "1.2rem" }}>
           <button
             onClick={() => router.push("/login")}
-            className="text-xs font-semibold px-4 py-2.5 rounded-xl transition-all hover:text-white text-slate-300"
-            style={{ border: "1px solid rgba(255, 255, 255, 0.12)", backgroundColor: "rgba(255, 255, 255, 0.03)" }}
+            style={{
+              padding: "0.7rem 1.35rem",
+              borderRadius: "12px",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: "#E2E8F0",
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              cursor: "pointer",
+              transition: "all 0.2s"
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)")}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)")}
           >
             Staff Access
           </button>
           <button
             onClick={() => setShowLoginModal(true)}
-            className="text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all hover:opacity-90 text-white shadow-lg"
-            style={{ background: "linear-gradient(135deg, #FF5A43 0%, #E04E39 100%)", boxShadow: "0 6px 20px -4px rgba(255, 90, 67, 0.4)" }}
+            style={{
+              padding: "0.7rem 1.5rem",
+              borderRadius: "12px",
+              backgroundColor: "#FF5A43",
+              border: "none",
+              color: "#FFFFFF",
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              cursor: "pointer",
+              boxShadow: "0 6px 18px rgba(255, 90, 67, 0.4)",
+              transition: "all 0.2s"
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#E04E39")}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#FF5A43")}
           >
-            Sign In Portal <ArrowRight size={14} />
+            Sign In Portal <ArrowRight size={15} />
           </button>
         </div>
       </header>
 
-      {/* Centered Ultra-Minimalist Hero */}
-      <main style={{ flex: 1, padding: "6rem 5% 7rem", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        {/* Subtle radial light diffusion */}
-        <div style={{
-          position: "absolute", top: "15%", left: "50%", transform: "translateX(-50%)", width: "700px", height: "450px",
-          background: "radial-gradient(circle, rgba(255, 90, 67, 0.09) 0%, rgba(8, 12, 20, 0) 70%)",
-          zIndex: 0, pointerEvents: "none"
-        }} />
-
-        <div className="max-w-4xl mx-auto text-center" style={{ position: "relative", zIndex: 1 }}>
-          <h1 className="font-black leading-tight tracking-tight text-white mb-6" style={{ fontSize: "clamp(3.2rem, 6.5vw, 4.75rem)", lineHeight: 1.08 }}>
+      {/* Hero Section */}
+      <main style={{ flex: 1, padding: "6rem 6% 8rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+        
+        {/* Hero Title and Subtitle Container */}
+        <div style={{ maxWidth: "880px", margin: "0 auto" }}>
+          <h1 style={{
+            fontSize: "clamp(3rem, 6vw, 4.5rem)",
+            fontWeight: 900,
+            color: "#FFFFFF",
+            lineHeight: 1.12,
+            letterSpacing: "-0.04em",
+            margin: "0 0 1.75rem"
+          }}>
             Empowering ministry. <br />
-            <span style={{ background: "linear-gradient(135deg, #FF5A43 0%, #FF8F7C 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Elevating fellowship.
-            </span>
+            <span style={{ color: "#FF5A43" }}>Elevating fellowship.</span>
           </h1>
 
-          <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto font-normal mb-10">
+          <p style={{
+            fontSize: "1.2rem",
+            color: "#94A3B8",
+            lineHeight: 1.75,
+            margin: "0 auto 3rem",
+            maxWidth: "700px",
+            fontWeight: 400
+          }}>
             The all-in-one digital sanctuary for Kenol Flock leadership. Manage congregation attendance, coordinate church events, monitor live tithes & offerings, and foster spiritual growth with seamless precision.
           </p>
 
-          <div className="flex items-center justify-center gap-4 flex-wrap mb-14">
+          {/* Action Buttons Row */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap", marginBottom: "3.5rem" }}>
             <button
               onClick={() => router.push("/dashboard")}
-              className="text-sm font-bold px-8 py-4 rounded-2xl flex items-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] text-white"
-              style={{ background: "#FF5A43", boxShadow: "0 12px 30px -8px rgba(255, 90, 67, 0.5)" }}
+              style={{
+                padding: "1.1rem 2.4rem",
+                borderRadius: "16px",
+                backgroundColor: "#FF5A43",
+                border: "none",
+                color: "#FFFFFF",
+                fontSize: "1.05rem",
+                fontWeight: 800,
+                display: "flex",
+                alignItems: "center",
+                gap: "0.7rem",
+                cursor: "pointer",
+                boxShadow: "0 14px 35px -8px rgba(255, 90, 67, 0.6)",
+                transition: "transform 0.2s, background-color 0.2s"
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#E04E39")}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#FF5A43")}
             >
               Access Ministry Portal <ArrowRight size={18} />
             </button>
 
             <button
               onClick={() => router.push("/login")}
-              className="text-sm font-semibold px-7 py-4 rounded-2xl flex items-center gap-2 transition-all hover:bg-white/10 text-slate-200"
-              style={{ border: "1px solid rgba(255, 255, 255, 0.14)", backgroundColor: "rgba(255, 255, 255, 0.04)" }}
+              style={{
+                padding: "1.1rem 2rem",
+                borderRadius: "16px",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.18)",
+                color: "#FFFFFF",
+                fontSize: "1.05rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)")}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)")}
             >
               Staff Role Access
             </button>
           </div>
 
-          {/* Clean Trust Strip */}
-          <div className="flex items-center justify-center gap-8 text-xs font-medium text-slate-400 flex-wrap">
-            <span className="flex items-center gap-2">
-              <CheckCircle2 size={15} className="text-emerald-400" /> Real-time Cloud Synchronization
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle2 size={15} className="text-emerald-400" /> Enterprise Role Security
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle2 size={15} className="text-emerald-400" /> Automated Congregation Care
-            </span>
+          {/* Clean Trust Indicators Strip */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "3rem", flexWrap: "wrap", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "2.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "0.9rem", color: "#94A3B8", fontWeight: 600 }}>
+              <CheckCircle2 size={18} style={{ color: "#34D399" }} /> Real-time Cloud Synchronization
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "0.9rem", color: "#94A3B8", fontWeight: 600 }}>
+              <CheckCircle2 size={18} style={{ color: "#34D399" }} /> Enterprise Role Security
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", fontSize: "0.9rem", color: "#94A3B8", fontWeight: 600 }}>
+              <CheckCircle2 size={18} style={{ color: "#34D399" }} /> Automated Congregation Care
+            </div>
           </div>
         </div>
 
-        {/* Clean Architectural Capabilities Strip (No Clutter, Pure Typography) */}
-        <div id="features" className="max-w-5xl mx-auto w-full mt-24 pt-16 border-t border-white/10 grid grid-cols-1 md:grid-cols-3 gap-10 text-left" style={{ position: "relative", zIndex: 1 }}>
-          <div className="group cursor-pointer p-6 rounded-3xl transition-all hover:bg-white/[0.03] border border-transparent hover:border-white/10" onClick={() => router.push("/dashboard/donations")}>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5 group-hover:scale-110 transition-transform">
-              <HeartHandshake size={24} />
+        {/* 3-Card Capabilities Grid with Rock-Solid Enclosed Styling */}
+        <div id="features" style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "2rem",
+          width: "100%",
+          maxWidth: "1160px",
+          margin: "5rem auto 0",
+          textAlign: "left"
+        }}>
+          {/* Card 1: Giving & Treasury */}
+          <div
+            onClick={() => router.push("/dashboard/donations")}
+            style={{
+              backgroundColor: "rgba(15, 23, 42, 0.95)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "24px",
+              padding: "2.25rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+              cursor: "pointer",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
+              transition: "border-color 0.2s, transform 0.2s"
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.borderColor = "#FF5A43"; e.currentTarget.style.transform = "translateY(-4px)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)"; e.currentTarget.style.transform = "translateY(0)"; }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{
+                width: "52px", height: "52px", borderRadius: "14px",
+                backgroundColor: "rgba(16, 185, 129, 0.15)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#34D399"
+              }}>
+                <HeartHandshake size={26} />
+              </div>
+              <span style={{
+                padding: "0.35rem 0.8rem", borderRadius: "20px", fontSize: "0.7rem", fontWeight: 800,
+                backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#34D399", letterSpacing: "0.05em"
+              }}>
+                INSTANT SETTLEMENT
+              </span>
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Giving & Treasury</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#FFFFFF", margin: 0 }}>Giving & Treasury</h3>
+            <p style={{ fontSize: "0.95rem", color: "#94A3B8", lineHeight: 1.65, margin: 0 }}>
               Accept digital tithes, building funds, and offerings with instant Mobile Money settlement and automated tax-compliant receipts.
             </p>
+            <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#FF5A43", display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "auto", paddingTop: "0.75rem" }}>
+              Explore Giving Module &rarr;
+            </div>
           </div>
 
-          <div className="group cursor-pointer p-6 rounded-3xl transition-all hover:bg-white/[0.03] border border-transparent hover:border-white/10" onClick={() => router.push("/dashboard/members")}>
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-5 group-hover:scale-110 transition-transform">
-              <Users size={24} />
+          {/* Card 2: Sanctuary Directory */}
+          <div
+            onClick={() => router.push("/dashboard/members")}
+            style={{
+              backgroundColor: "rgba(15, 23, 42, 0.95)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "24px",
+              padding: "2.25rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+              cursor: "pointer",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
+              transition: "border-color 0.2s, transform 0.2s"
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.borderColor = "#60A5FA"; e.currentTarget.style.transform = "translateY(-4px)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)"; e.currentTarget.style.transform = "translateY(0)"; }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{
+                width: "52px", height: "52px", borderRadius: "14px",
+                backgroundColor: "rgba(59, 130, 246, 0.15)",
+                border: "1px solid rgba(59, 130, 246, 0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#60A5FA"
+              }}>
+                <Users size={26} />
+              </div>
+              <span style={{
+                padding: "0.35rem 0.8rem", borderRadius: "20px", fontSize: "0.7rem", fontWeight: 800,
+                backgroundColor: "rgba(59, 130, 246, 0.12)", color: "#60A5FA", letterSpacing: "0.05em"
+              }}>
+                MEMBER TRACKING
+              </span>
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Sanctuary Directory</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#FFFFFF", margin: 0 }}>Sanctuary Directory</h3>
+            <p style={{ fontSize: "0.95rem", color: "#94A3B8", lineHeight: 1.65, margin: 0 }}>
               Track congregation attendance, coordinate small groups, and automate follow-ups for first-time guests with pastoral oversight.
             </p>
+            <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#60A5FA", display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "auto", paddingTop: "0.75rem" }}>
+              Explore Directory Module &rarr;
+            </div>
           </div>
 
-          <div className="group cursor-pointer p-6 rounded-3xl transition-all hover:bg-white/[0.03] border border-transparent hover:border-white/10" onClick={() => router.push("/dashboard/messages")}>
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-5 group-hover:scale-110 transition-transform">
-              <MessageSquare size={24} />
+          {/* Card 3: Congregation Messaging */}
+          <div
+            onClick={() => router.push("/dashboard/messages")}
+            style={{
+              backgroundColor: "rgba(15, 23, 42, 0.95)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "24px",
+              padding: "2.25rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+              cursor: "pointer",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
+              transition: "border-color 0.2s, transform 0.2s"
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.borderColor = "#FACC15"; e.currentTarget.style.transform = "translateY(-4px)"; }}
+            onMouseOut={(e) => { e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)"; e.currentTarget.style.transform = "translateY(0)"; }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{
+                width: "52px", height: "52px", borderRadius: "14px",
+                backgroundColor: "rgba(250, 204, 21, 0.15)",
+                border: "1px solid rgba(250, 204, 21, 0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#FACC15"
+              }}>
+                <MessageSquare size={26} />
+              </div>
+              <span style={{
+                padding: "0.35rem 0.8rem", borderRadius: "20px", fontSize: "0.7rem", fontWeight: 800,
+                backgroundColor: "rgba(250, 204, 21, 0.12)", color: "#FACC15", letterSpacing: "0.05em"
+              }}>
+                SMS BROADCASTING
+              </span>
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Congregation Messaging</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#FFFFFF", margin: 0 }}>Congregation Messaging</h3>
+            <p style={{ fontSize: "0.95rem", color: "#94A3B8", lineHeight: 1.65, margin: 0 }}>
               Broadcast instant announcements, devotionals, and meeting reminders to members across Ghana via direct SMS delivery.
             </p>
+            <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#FACC15", display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "auto", paddingTop: "0.75rem" }}>
+              Explore Messaging Module &rarr;
+            </div>
           </div>
         </div>
       </main>
 
-      {/* Clean Executive Impact Strip */}
-      <section id="impact" style={{ padding: "4rem 5%", backgroundColor: "rgba(12, 18, 30, 0.6)", borderTop: "1px solid rgba(255, 255, 255, 0.06)", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 text-center gap-10">
+      {/* Sanctuary Impact Bar */}
+      <section id="impact" style={{
+        padding: "4.5rem 6%",
+        backgroundColor: "rgba(11, 16, 27, 0.95)",
+        borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
+      }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: "3rem",
+          maxWidth: "1050px",
+          margin: "0 auto",
+          textAlign: "center"
+        }}>
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-white mb-1 tracking-tight" style={{ color: "#FF5A43" }}>GHS 42,500+</div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Processed Offerings & Tithes</div>
+            <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#FF5A43", marginBottom: "0.35rem", letterSpacing: "-0.03em" }}>GHS 42,500+</div>
+            <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em" }}>Processed Offerings & Tithes</div>
           </div>
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-white mb-1 tracking-tight" style={{ color: "#FACC15" }}>1,248+</div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Active Directory Members</div>
+            <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#FACC15", marginBottom: "0.35rem", letterSpacing: "-0.03em" }}>1,248+</div>
+            <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em" }}>Active Directory Members</div>
           </div>
           <div>
-            <div className="text-3xl md:text-4xl font-extrabold text-white mb-1 tracking-tight" style={{ color: "#34D399" }}>99.9%</div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Sanctuary & Cloud Reliability</div>
+            <div style={{ fontSize: "2.8rem", fontWeight: 900, color: "#34D399", marginBottom: "0.35rem", letterSpacing: "-0.03em" }}>99.9%</div>
+            <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.1em" }}>Sanctuary & Cloud Reliability</div>
           </div>
         </div>
       </section>
@@ -227,52 +409,61 @@ export default function Home() {
         <div style={{
           position: "fixed", inset: 0, backgroundColor: "rgba(0, 0, 0, 0.85)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          zIndex: 100, backdropFilter: "blur(12px)", padding: "1rem"
+          zIndex: 100, backdropFilter: "blur(14px)", padding: "1.5rem"
         }}>
-          <div className="animate-fade-in flex-col gap-5 relative p-8" style={{ width: "100%", maxWidth: "420px", display: "flex", backgroundColor: "#0F172A", border: "1px solid rgba(255, 255, 255, 0.12)", borderRadius: "28px", boxShadow: "0 25px 60px rgba(0,0,0,0.8)" }}>
+          <div style={{
+            width: "100%", maxWidth: "440px", backgroundColor: "#0F172A",
+            border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "28px",
+            padding: "2.5rem", position: "relative", boxShadow: "0 30px 70px rgba(0,0,0,0.85)",
+            display: "flex", flexDirection: "column", gap: "1.5rem"
+          }}>
             <button
               onClick={() => setShowLoginModal(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-white font-bold text-base"
+              style={{ position: "absolute", top: "1.5rem", right: "1.5rem", background: "none", border: "none", color: "#94A3B8", fontSize: "1.3rem", fontWeight: 800, cursor: "pointer" }}
             >
               ✕
             </button>
 
-            <div className="text-center pb-2">
+            <div style={{ textAlign: "center" }}>
               <div style={{
-                width: "52px", height: "52px", borderRadius: "14px",
+                width: "56px", height: "56px", borderRadius: "16px",
                 backgroundColor: "#FF5A43",
                 display: "inline-flex", alignItems: "center", justifyContent: "center",
-                color: "white", marginBottom: "1rem",
-                boxShadow: "0 8px 24px rgba(255, 90, 67, 0.4)"
+                color: "white", marginBottom: "1.2rem",
+                boxShadow: "0 8px 24px rgba(255, 90, 67, 0.45)"
               }}>
-                <Phone size={24} />
+                <Phone size={26} />
               </div>
-              <h3 className="text-xl font-extrabold text-white">Staff SMS Verification</h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">Enter your registered mobile number to receive a one-time authentication code</p>
+              <h3 style={{ fontSize: "1.5rem", fontWeight: 900, color: "#FFFFFF", margin: "0 0 0.5rem" }}>Staff SMS Verification</h3>
+              <p style={{ fontSize: "0.88rem", color: "#94A3B8", lineHeight: 1.6, margin: 0 }}>Enter your registered mobile number to receive a one-time authentication code</p>
             </div>
 
             {error && (
-              <div style={{ padding: "0.8rem 1rem", backgroundColor: "rgba(239, 68, 68, 0.12)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "#FCA5A5", borderRadius: "12px", fontSize: "0.75rem" }}>
+              <div style={{ padding: "0.85rem 1rem", backgroundColor: "rgba(239, 68, 68, 0.15)", border: "1px solid rgba(239, 68, 68, 0.35)", color: "#FCA5A5", borderRadius: "12px", fontSize: "0.8rem", fontWeight: 600 }}>
                 {error}
               </div>
             )}
 
             {successMsg && (
-              <div style={{ padding: "0.8rem 1rem", backgroundColor: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.3)", color: "#34D399", borderRadius: "12px", fontSize: "0.75rem" }}>
+              <div style={{ padding: "0.85rem 1rem", backgroundColor: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.35)", color: "#34D399", borderRadius: "12px", fontSize: "0.8rem", fontWeight: 600 }}>
                 {successMsg}
               </div>
             )}
 
             {step === "PHONE" ? (
-              <form onSubmit={handleSendOtp} className="flex-col gap-4" style={{ display: "flex" }}>
+              <form onSubmit={handleSendOtp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-2">Mobile Telephone Number</label>
+                  <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#CBD5E1", display: "block", marginBottom: "0.6rem" }}>Mobile Telephone Number</label>
                   <div style={{ position: "relative" }}>
-                    <Phone size={16} style={{ position: "absolute", left: "1.1rem", top: "50%", transform: "translateY(-50%)", color: "#64748B" }} />
+                    <Phone size={18} style={{ position: "absolute", left: "1.2rem", top: "50%", transform: "translateY(-50%)", color: "#64748B" }} />
                     <input
                       type="tel"
-                      className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl text-sm text-white focus:border-primary focus:outline-none transition-colors"
-                      style={{ padding: "0.85rem 1rem 0.85rem 2.8rem" }}
+                      style={{
+                        width: "100%", backgroundColor: "rgba(8, 12, 20, 0.9)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "14px",
+                        padding: "0.95rem 1rem 0.95rem 3rem", fontSize: "0.95rem", color: "#FFFFFF",
+                        outline: "none", boxSizing: "border-box"
+                      }}
                       placeholder="e.g. 233541234567"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
@@ -280,20 +471,28 @@ export default function Home() {
                     />
                   </div>
                 </div>
-                <button type="submit" className="w-full font-bold py-3.5 rounded-xl text-sm transition-all text-white mt-1 hover:opacity-90" style={{ background: "#FF5A43" }} disabled={loading}>
-                  {loading ? <Loader2 size={18} className="animate-spin mx-auto" /> : "Send Verification SMS"}
+                <button type="submit" disabled={loading} style={{
+                  width: "100%", padding: "1.05rem", borderRadius: "14px", backgroundColor: "#FF5A43",
+                  border: "none", color: "#FFFFFF", fontSize: "0.95rem", fontWeight: 800, cursor: "pointer",
+                  boxShadow: "0 8px 20px rgba(255, 90, 67, 0.45)"
+                }}>
+                  {loading ? <Loader2 size={20} className="animate-spin" style={{ margin: "0 auto" }} /> : "Send Verification SMS"}
                 </button>
               </form>
             ) : (
-              <form onSubmit={handleVerifyOtp} className="flex-col gap-4" style={{ display: "flex" }}>
+              <form onSubmit={handleVerifyOtp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-2">Enter 6-Digit One Time Password</label>
+                  <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#CBD5E1", display: "block", marginBottom: "0.6rem" }}>Enter 6-Digit One Time Password</label>
                   <div style={{ position: "relative" }}>
-                    <KeyRound size={16} style={{ position: "absolute", left: "1.1rem", top: "50%", transform: "translateY(-50%)", color: "#64748B" }} />
+                    <KeyRound size={18} style={{ position: "absolute", left: "1.2rem", top: "50%", transform: "translateY(-50%)", color: "#64748B" }} />
                     <input
                       type="text"
-                      className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl font-bold tracking-[0.3em] text-center text-base text-white focus:border-primary focus:outline-none transition-colors"
-                      style={{ padding: "0.85rem 1rem 0.85rem 2.8rem" }}
+                      style={{
+                        width: "100%", backgroundColor: "rgba(8, 12, 20, 0.9)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "14px",
+                        padding: "0.95rem 1rem 0.95rem 3rem", fontSize: "1.1rem", fontWeight: 800, letterSpacing: "0.3em", textAlign: "center", color: "#FFFFFF",
+                        outline: "none", boxSizing: "border-box"
+                      }}
                       placeholder="000000"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
@@ -301,19 +500,23 @@ export default function Home() {
                     />
                   </div>
                 </div>
-                <button type="submit" className="w-full font-bold py-3.5 rounded-xl text-sm transition-all text-white mt-1 hover:opacity-90" style={{ background: "#FF5A43" }} disabled={loading}>
-                  {loading ? <Loader2 size={18} className="animate-spin mx-auto" /> : "Verify & Sign In"}
+                <button type="submit" disabled={loading} style={{
+                  width: "100%", padding: "1.05rem", borderRadius: "14px", backgroundColor: "#FF5A43",
+                  border: "none", color: "#FFFFFF", fontSize: "0.95rem", fontWeight: 800, cursor: "pointer",
+                  boxShadow: "0 8px 20px rgba(255, 90, 67, 0.45)"
+                }}>
+                  {loading ? <Loader2 size={20} className="animate-spin" style={{ margin: "0 auto" }} /> : "Verify & Sign In"}
                 </button>
-                <button type="button" onClick={() => setStep("PHONE")} className="w-full text-slate-400 hover:text-white text-xs font-medium py-2">
+                <button type="button" onClick={() => setStep("PHONE")} style={{ background: "none", border: "none", color: "#94A3B8", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer" }}>
                   Use Different Phone Number
                 </button>
               </form>
             )}
 
-            <div className="pt-3 border-t border-slate-800 text-center">
+            <div style={{ paddingTop: "1.25rem", borderTop: "1px solid rgba(255, 255, 255, 0.08)", textAlign: "center" }}>
               <button
                 onClick={() => router.push("/login")}
-                className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors w-full py-2"
+                style={{ background: "none", border: "none", color: "#FACC15", fontSize: "0.88rem", fontWeight: 700, cursor: "pointer" }}
               >
                 Open Staff Access Portal &rarr;
               </button>
