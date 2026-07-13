@@ -1,5 +1,5 @@
 export async function sendSms(recipient: string, message: string) {
-  const apiKey = process.env.MOOLRE_SMS_KEY || process.env.MOORLE_SMS_KEY;
+  const apiKey = process.env.MOOLRE_SMS_KEY || process.env.MOOLRE_SECRET_KEY || process.env.MOORLE_SMS_KEY;
   const senderId = process.env.MOOLRE_SENDER_ID || 'KenolFlock';
   const isProduction = process.env.NODE_ENV === 'production' || process.env.MOOLRE_ENV === 'production';
 
@@ -21,6 +21,8 @@ export async function sendSms(recipient: string, message: string) {
       method: 'GET',
       headers: {
         'X-API-VASKEY': apiKey,
+        'X-API-KEY': apiKey,
+        'Authorization': `Bearer ${apiKey}`,
         'Accept': 'application/json',
       },
     });
@@ -51,10 +53,10 @@ export async function createPaymentLink(params: {
   callbackUrl?: string;
   currency?: string;
 }) {
-  const pubKey = process.env.MOOLRE_PUBLIC_KEY;
+  const pubKey = process.env.MOOLRE_PUBLIC_KEY || process.env.MOOLRE_SECRET_KEY;
   const isProduction = process.env.NODE_ENV === 'production' || process.env.MOOLRE_ENV === 'production';
 
-  // If live Moolre Public Key is provided, request live embed checkout link from Moolre Gateway
+  // If live Moolre Public Key or Secret Key is provided, request live embed checkout link from Moolre Gateway
   if (pubKey && pubKey !== 'YOUR_MOOLRE_PUBLIC_KEY' && !pubKey.includes('placeholder')) {
     const baseUrl = isProduction ? 'https://api.moolre.com' : 'https://sandbox.moolre.com';
     const url = `${baseUrl}/embed/link`;
@@ -63,6 +65,8 @@ export async function createPaymentLink(params: {
       method: 'POST',
       headers: {
         'X-API-PUBKEY': pubKey,
+        'X-API-KEY': pubKey,
+        'Authorization': `Bearer ${pubKey}`,
         'X-API-USER': process.env.MOOLRE_USERNAME || '',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
