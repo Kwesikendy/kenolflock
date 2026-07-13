@@ -4,11 +4,12 @@ import { useState } from 'react';
 import styles from './page.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { ShieldAlert, Info, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ShieldAlert, Info, Sparkles, CheckCircle2, Send } from 'lucide-react';
 
 export default function SmsTestPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const [senderId, setSenderId] = useState('KenolFlock');
   const [recipient, setRecipient] = useState('');
   const [message, setMessage] = useState('');
   const [simulate, setSimulate] = useState(false);
@@ -24,7 +25,7 @@ export default function SmsTestPage() {
       const res = await fetch('/api/sms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ recipient, message, simulate }),
+        body: JSON.stringify({ recipient, message, simulate, senderId }),
       });
 
       const data = await res.json();
@@ -74,6 +75,21 @@ export default function SmsTestPage() {
         </p>
         
         <form onSubmit={handleSend}>
+          {/* Sender ID Input field to fix ASMS07 errors */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Sender ID (Must be whitelisted on Moolre)</label>
+            <input
+              type="text"
+              required
+              maxLength={11}
+              value={senderId}
+              onChange={(e) => setSenderId(e.target.value)}
+              placeholder="e.g. KenolFlock, Moolre, CHURCH"
+              className={styles.input}
+            />
+            <span className={styles.hint}>Max 11 alphanumeric characters. Must match an approved Sender ID on your Moolre VAS account.</span>
+          </div>
+
           <div className={styles.formGroup}>
             <label className={styles.label}>Recipient Number</label>
             <input
@@ -117,7 +133,7 @@ export default function SmsTestPage() {
             disabled={status === 'loading'}
             className={styles.button}
           >
-            {status === 'loading' ? 'Sending...' : simulate ? 'Send Simulated SMS' : 'Send Live SMS via Moolre'}
+            {status === 'loading' ? 'Sending...' : simulate ? 'Send Simulated SMS' : `Send Live SMS as '${senderId}'`}
           </button>
         </form>
 
@@ -132,19 +148,19 @@ export default function SmsTestPage() {
           </div>
         )}
 
-        {/* Diagnostic Guide for AIN11 / Auth Errors */}
+        {/* Diagnostic Guide for ASMS07 / AIN11 Errors */}
         <div style={{ marginTop: "2rem", padding: "1.25rem", borderRadius: "16px", backgroundColor: "#1E293B", border: "1px solid #334155", textAlign: "left" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "#FACC15", fontWeight: 800, fontSize: "0.9rem", marginBottom: "0.75rem" }}>
-            <Info size={18} /> Why did I get Authentication Error (`code: AIN11`)?
+            <Info size={18} /> Resolving `ASMS07` (Sender ID Not Approved)
           </div>
           <p style={{ fontSize: "0.8rem", color: "#CBD5E1", lineHeight: 1.6, margin: "0 0 0.75rem" }}>
-            Moolre uses separate authorization systems for **Merchant Payments** (POS/Embed links) vs **Bulk SMS / Value Added Services (VAS)**. If you see `code: AIN11`:
+            To prevent spam across Ghana mobile networks (MTN, Telecel, AirtelTigo), National Communications Authority (NCA) and SMS gateways require all customized Sender IDs to be registered before live dispatch. If you see `code: ASMS07`:
           </p>
           <ul style={{ fontSize: "0.8rem", color: "#94A3B8", lineHeight: 1.6, paddingLeft: "1.2rem", margin: 0 }}>
-            <li>The secret key in Vercel (`14a3f654-7178-47bd-998b-dfd8b8878f3f`) is authorized for payments/checkouts, but not yet authorized for Moolre VAS SMS.</li>
-            <li><strong>How to enable Live SMS:</strong> Log into your Moolre dashboard &rarr; navigate to <strong>VAS / SMS API Gateway</strong> &rarr; generate your dedicated `MOOLRE_SMS_KEY` (and ensure your VAS wallet has SMS credit).</li>
-            <li>Add `MOOLRE_SMS_KEY` to your Vercel Environment Variables and redeploy.</li>
-            <li>Until your live VAS Key is generated, you can check the <strong>Simulate SMS Dispatch</strong> box right above to test and verify how the congregation broadcast system works!</li>
+            <li><strong>Step 1: Check your whitelisted Sender IDs</strong> Log into <a href="https://app.moolre.com" target="_blank" rel="noopener noreferrer" style={{ color: "#60A5FA", textDecoration: "underline" }}>app.moolre.com</a> &rarr; navigate to <strong>VAS / SMS Dashboard</strong> &rarr; <strong>Sender IDs</strong>.</li>
+            <li><strong>Step 2: Use your exact approved ID</strong> Look at what Sender ID is already active/approved on your account (such as `Moolre`, `SMS`, `ALERT`, or your registered church name). Type that exact name into the <strong>Sender ID</strong> field above!</li>
+            <li><strong>Step 3: Set globally</strong> To set it permanently for your entire ministry portal without typing it each time, add `MOOLRE_SENDER_ID=YourApprovedName` to your Vercel Environment Variables!</li>
+            <li>Until your Sender ID is approved by telecom networks, you can check the <strong>Simulate SMS Dispatch</strong> box above to verify and demo congregation announcements without operator blocks!</li>
           </ul>
         </div>
       </div>

@@ -1,10 +1,10 @@
-export async function sendSms(recipient: string, message: string, simulate: boolean = false) {
+export async function sendSms(recipient: string, message: string, simulate: boolean = false, customSenderId?: string) {
   // Use user's exact JWT VAS API key as the primary fallback if environment variable is not explicitly set to a JWT
   const defaultVasKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2YXNpZCI6OTUzMywiZXhwIjoxOTU2NTI3OTk5fQ.Xak84Z8Rqwdp6eofQL2mixy-LhQaMNVJz2CRFWfpS0o';
   const rawEnvKey = process.env.MOOLRE_SMS_KEY || process.env.MOOLRE_VAS_KEY || process.env.MOORLE_SMS_KEY;
   // If env variable contains a merchant payment UUID (like 14a3f654-...), ignore it and use the real JWT VAS token
   const apiKey = (rawEnvKey && rawEnvKey.startsWith('eyJ')) ? rawEnvKey : defaultVasKey;
-  const senderId = process.env.MOOLRE_SENDER_ID || 'KenolFlock';
+  const senderId = customSenderId && customSenderId.trim() ? customSenderId.trim() : (process.env.MOOLRE_SENDER_ID || 'KenolFlock');
   const isProduction = process.env.NODE_ENV === 'production' || process.env.MOOLRE_ENV === 'production';
 
   if (simulate) {
@@ -12,7 +12,7 @@ export async function sendSms(recipient: string, message: string, simulate: bool
     return {
       status: true,
       code: '100',
-      message: 'Message dispatched successfully (Simulated Sandbox Mode)',
+      message: `Message dispatched successfully from '${senderId}' (Simulated Sandbox Mode)`,
       messageId: `sim_sms_${Date.now()}_${Math.floor(Math.random() * 9000)}`,
       simulated: true,
     };
@@ -70,7 +70,7 @@ export async function sendSms(recipient: string, message: string, simulate: bool
       }
     }
 
-    // 2nd Attempt: If GET returned status 0/AIN11 or failed, try POST with JSON body
+    // 2nd Attempt: If GET returned status 0/AIN11/ASMS07 or failed, try POST with JSON body
     if (!response.ok || !json || (json.status !== 1 && json.status !== true)) {
       console.log(`[Moolre SMS] GET attempt returned ${json?.code || response.status}. Attempting POST with JSON payload...`);
       response = await fetch(MOOLRE_API_URL, {
@@ -103,13 +103,17 @@ export async function sendSms(recipient: string, message: string, simulate: bool
       throw new Error(`Failed to send SMS via Moolre HTTP Gateway: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    // Check if Moolre returned an error JSON inside HTTP 200 OK (e.g. status: 0 or code: AIN11)
+    // Check if Moolre returned an error JSON inside HTTP 200 OK (e.g. status: 0 or code: AIN11/ASMS07)
     if (json && json.status !== 1 && json.status !== true) {
       const errCode = json.code || 'Moolre_Error';
       const errMsg = json.message || 'Unknown SMS dispatch failure';
 
-      if (errCode === 'AIN11' || errMsg.toLowerCase().includes('authentication')) {
+      if (errCode === 'AIN11' || errCode === 'AIN01' || errMsg.toLowerCase().includes('authentication')) {
         throw new Error(`Moolre Authentication Error (${errCode}): Your Moolre API key (${apiKey.slice(0, 10)}...) was rejected by the gateway. Please verify that VAS ID ${vasId} has sufficient balance and active SMS broadcast permissions in your Moolre Merchant Portal.`);
+      }
+
+      if (errCode === 'ASMS07' || errMsg.toLowerCase().includes('sender id')) {
+        throw new Error(`Moolre SMS Gateway Error (${errCode}): The Sender ID '${senderId}' is not yet whitelisted/approved on your Moolre account. Please check your approved Sender IDs on app.moolre.com and enter one in the Sender ID box above, or add MOOLRE_SENDER_ID to Vercel environment variables.`);
       }
 
       throw new Error(`Moolre SMS Gateway Error (${errCode}): ${errMsg}`);

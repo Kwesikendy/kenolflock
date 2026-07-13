@@ -5,7 +5,7 @@ import { collection, addDoc } from 'firebase/firestore';
 
 export async function POST(request: Request) {
   try {
-    const { campaignName, targetAudience, customNumbers, message, simulate } = await request.json();
+    const { campaignName, targetAudience, customNumbers, message, simulate, senderId } = await request.json();
 
     if (!message || !campaignName) {
       return NextResponse.json(
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     // Send SMS via live Moolre API or simulation
     for (const phone of recipientsList) {
       try {
-        await sendSms(phone, message, Boolean(simulate));
+        await sendSms(phone, message, Boolean(simulate), senderId);
         successCount++;
       } catch (err: any) {
         console.error(`Failed sending to ${phone}:`, err);

@@ -4,7 +4,7 @@ import { sendSms } from '@/lib/moolre';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { recipient, message, simulate } = body;
+    const { recipient, message, simulate, senderId } = body;
 
     if (!recipient || !message) {
       return NextResponse.json(
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await sendSms(recipient, message, Boolean(simulate));
+    const result = await sendSms(recipient, message, Boolean(simulate), senderId);
 
     return NextResponse.json({ success: true, result });
   } catch (error: any) {
