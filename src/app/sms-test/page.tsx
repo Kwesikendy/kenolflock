@@ -99,7 +99,7 @@ export default function SmsTestPage() {
           </div>
 
           {/* Simulation Mode Toggle Option */}
-          <div style={{ display: "flex", itemsCenter: "center", gap: "0.6rem", margin: "0.5rem 0 1.5rem", padding: "0.85rem", backgroundColor: "rgba(255, 90, 67, 0.08)", borderRadius: "12px", border: "1px solid rgba(255, 90, 67, 0.2)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", margin: "0.5rem 0 1.5rem", padding: "0.85rem", backgroundColor: "rgba(255, 90, 67, 0.08)", borderRadius: "12px", border: "1px solid rgba(255, 90, 67, 0.2)" }}>
             <input
               type="checkbox"
               id="simulateMode"
