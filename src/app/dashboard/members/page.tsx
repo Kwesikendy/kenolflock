@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, Plus, MoreVertical, Filter, Mail, Phone as PhoneIcon, Calendar, Loader2, Users, Sparkles, Shield, UserCheck, User } from "lucide-react";
 import { Member } from "@/types";
-import { getMembers } from "@/lib/db-service";
+import { getMembers, subscribeToMembers } from "@/lib/db-service";
 import { useAuth } from "@/context/AuthContext";
 
 export default function MembersPage() {
@@ -17,13 +17,12 @@ export default function MembersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadMembers() {
-      setLoading(true);
-      const data = await getMembers();
+    setLoading(true);
+    const unsub = subscribeToMembers((data) => {
       setMembers(data);
       setLoading(false);
-    }
-    loadMembers();
+    });
+    return () => unsub();
   }, []);
 
   const filteredMembers = members.filter(member => 

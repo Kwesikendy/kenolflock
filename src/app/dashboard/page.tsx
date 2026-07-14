@@ -3,77 +3,124 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Users, DollarSign, Calendar, TrendingUp, Plus, HeartHandshake, MessageSquare, Sparkles, ArrowRight, ShieldCheck, ArrowUpRight } from "lucide-react";
-import { getMembers, getDonations, getEvents } from "@/lib/db-service";
+import { subscribeToMembers, subscribeToDonations, subscribeToEvents, subscribeToBroadcasts } from "@/lib/db-service";
+import { Member, Donation, ChurchEvent, BroadcastRecord } from "@/types";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [memberCount, setMemberCount] = useState(1248);
-  const [totalGiving, setTotalGiving] = useState(42500);
-  const [eventCount, setEventCount] = useState(3);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [donations, setDonations] = useState<Donation[]>([]);
+  const [events, setEvents] = useState<ChurchEvent[]>([]);
+  const [broadcasts, setBroadcasts] = useState<BroadcastRecord[]>([]);
 
   useEffect(() => {
-    async function loadStats() {
-      const members = await getMembers();
-      const donations = await getDonations();
-      const events = await getEvents();
-      
-      setMemberCount(1243 + members.length);
-      const sumGiving = donations.reduce((sum, item) => item.status === "Success" ? sum + Number(item.amount) : sum, 42500);
-      setTotalGiving(sumGiving);
-      setEventCount(Math.max(3, events.length));
-    }
-    loadStats();
+    const unsubMembers = subscribeToMembers((data) => setMembers(data));
+    const unsubDonations = subscribeToDonations((data) => setDonations(data));
+    const unsubEvents = subscribeToEvents((data) => setEvents(data));
+    const unsubBroadcasts = subscribeToBroadcasts((data) => setBroadcasts(data));
+
+    return () => {
+      unsubMembers();
+      unsubDonations();
+      unsubEvents();
+      unsubBroadcasts();
+    };
   }, []);
+
+  const memberCount = members.length;
+  const totalGiving = donations.reduce((sum, item) => item.status === "Success" ? sum + Number(item.amount) : sum, 0);
+  const eventCount = events.length;
+  const verifiedPhonesCount = members.filter(m => m.phone && m.phone.trim() !== "").length;
+  const smsReachPercent = memberCount > 0 ? Math.min(100, Math.round((verifiedPhonesCount / memberCount) * 1000) / 10) : 100;
 
   const stats = [
     { 
       title: "Active Directory Members", 
       value: memberCount.toLocaleString(), 
-      change: "+12.4% Onboarding Rate", 
+      change: "Live Database Count", 
       icon: Users, 
       badgeClass: "icon-badge-blue", 
       color: "#60A5FA",
-      progressLabel: "Goal: 1,500 Members (83% Achieved)",
-      progressPercent: 83
+      progressLabel: `Verified Contacts: ${verifiedPhonesCount} Members`,
+      progressPercent: Math.min(100, Math.round((memberCount / Math.max(10, memberCount)) * 100))
     },
     { 
       title: "Total Processed Offerings", 
       value: `GHS ${totalGiving.toLocaleString()}`, 
-      change: "+8.5% Weekly Collections", 
+      change: "Real-Time MoMo & Card Ledger", 
       icon: DollarSign, 
       badgeClass: "icon-badge-green", 
       color: "#34D399",
-      progressLabel: "Quarterly Goal: GHS 50,000 (85% Achieved)",
-      progressPercent: 85
+      progressLabel: `Total Transactions: ${donations.filter(d => d.status === "Success").length} Offerings`,
+      progressPercent: Math.min(100, Math.round((donations.filter(d => d.status === "Success").length / Math.max(10, donations.length || 1)) * 100))
     },
     { 
       title: "Scheduled Gatherings", 
       value: `${eventCount} Active`, 
-      change: "Worship & Youth Outreach", 
+      change: "Worship & Ministry Outreach", 
       icon: Calendar, 
       badgeClass: "icon-badge-gold", 
       color: "#FACC15",
-      progressLabel: "Sunday Service & Bible Study Active",
+      progressLabel: `Upcoming Events: ${events.filter(e => e.status === "Upcoming").length} Gatherings`,
       progressPercent: 100
     },
     { 
       title: "SMS Broadcast Gateway Reach", 
-      value: "99.8%", 
-      change: "Moolre SMS Live Gateway", 
+      value: `${smsReachPercent}%`, 
+      change: "Moolre Live Gateway", 
       icon: MessageSquare, 
       badgeClass: "icon-badge-coral", 
       color: "#FF5A43",
-      progressLabel: "All 1,248 Mobile Contacts Verified",
-      progressPercent: 99
+      progressLabel: `${verifiedPhonesCount} of ${memberCount} Mobile Contacts Verified`,
+      progressPercent: smsReachPercent
     }
   ];
 
-  const activities = [
-    { id: 1, name: "Sister Grace Osei", text: "Tithe Contribution via MTN MoMo (GHS 500)", time: "14 mins ago", initials: "GO", badge: "icon-badge-green", amount: "GHS +500.00" },
-    { id: 2, name: "Brother Kwame Mensah", text: "Completed New Member Digital Registration", time: "1 hour ago", initials: "KM", badge: "icon-badge-blue", amount: "New Onboarding" },
-    { id: 3, name: "Rev. Kenol (Admin)", text: "Published Sunday Celebration Event Schedule", time: "3 hours ago", initials: "RK", badge: "icon-badge-gold", amount: "Schedule" },
-    { id: 4, name: "Treasury Dept.", text: "Verified Moolre POS Sandbox Gateway Status", time: "5 hours ago", initials: "TD", badge: "icon-badge-coral", amount: "Verified" }
-  ];
+  // Combine real live recent records into the activity feed
+  const rawActivities: { id: string | number; name: string; text: string; time: string; initials: string; badge: string; amount: string; timestamp: number }[] = [];
+
+  donations.slice(0, 4).forEach((d, idx) => {
+    const initials = d.donor.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase() || "DN";
+    rawActivities.push({
+      id: `don_${d.id || idx}`,
+      name: d.donor,
+      text: `${d.purpose || "Contribution"} via MoMo / Card (${d.reference || "Verified"})`,
+      time: d.date || "Just now",
+      initials,
+      badge: "icon-badge-green",
+      amount: `GHS +${Number(d.amount).toLocaleString()}`,
+      timestamp: Date.parse(d.date || "") || Date.now() - idx * 60000
+    });
+  });
+
+  members.slice(0, 3).forEach((m, idx) => {
+    const initials = `${m.firstName?.[0] || ""}${m.lastName?.[0] || ""}`.toUpperCase() || "MB";
+    rawActivities.push({
+      id: `mem_${m.id || idx}`,
+      name: `${m.firstName} ${m.lastName}`,
+      text: `Registered under ${m.status || "Congregation Directory"} (${m.phone || "Verified"})`,
+      time: m.joinDate || "Recent Onboarding",
+      initials,
+      badge: "icon-badge-blue",
+      amount: "New Onboarding",
+      timestamp: Date.parse(m.joinDate || "") || Date.now() - (idx + 1) * 120000
+    });
+  });
+
+  broadcasts.slice(0, 2).forEach((b, idx) => {
+    rawActivities.push({
+      id: `brd_${b.id || idx}`,
+      name: `SMS Campaign: ${b.campaignName}`,
+      text: `Delivered to ${b.targetAudience} (${b.recipientsCount} recipients)`,
+      time: b.date || "Recent Broadcast",
+      initials: "SMS",
+      badge: "icon-badge-coral",
+      amount: `${b.recipientsCount} Sent`,
+      timestamp: Date.parse(b.date || "") || Date.now() - (idx + 2) * 180000
+    });
+  });
+
+  const activities = rawActivities.sort((a, b) => b.timestamp - a.timestamp).slice(0, 6);
 
   return (
     <div className="animate-fade-in flex-col gap-8" style={{ display: "flex" }}>

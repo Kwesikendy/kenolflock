@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { DollarSign, Wallet, ArrowUpRight, Loader2, Calendar, ShieldAlert } from "lucide-react";
 import { Donation } from "@/types";
-import { getDonations, addDonationRecord } from "@/lib/db-service";
+import { getDonations, addDonationRecord, subscribeToDonations } from "@/lib/db-service";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
@@ -20,13 +20,12 @@ export default function DonationsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadDonations() {
-      setDataLoading(true);
-      const data = await getDonations();
+    setDataLoading(true);
+    const unsub = subscribeToDonations((data) => {
       setDonations(data);
       setDataLoading(false);
-    }
-    loadDonations();
+    });
+    return () => unsub();
   }, []);
 
   if (user?.role === "Pastor") {
@@ -53,9 +52,9 @@ export default function DonationsPage() {
     );
   }
 
-  // Calculate dynamic statistics
-  const totalCollections = donations.reduce((sum, item) => item.status === "Success" ? sum + Number(item.amount) : sum, 42500);
-  const avgContribution = donations.length > 0 ? Math.round(totalCollections / (donations.length + 120)) : 120;
+  // Calculate dynamic statistics exact without mock padding
+  const totalCollections = donations.reduce((sum, item) => item.status === "Success" ? sum + Number(item.amount) : sum, 0);
+  const avgContribution = donations.length > 0 ? Math.round(totalCollections / donations.length) : 0;
 
   const handleGive = async (e: React.FormEvent) => {
     e.preventDefault();

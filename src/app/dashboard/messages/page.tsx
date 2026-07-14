@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { getBroadcasts, addBroadcastRecord, getMembers } from "@/lib/db-service";
-import { BroadcastRecord } from "@/types";
+import { getBroadcasts, addBroadcastRecord, subscribeToBroadcasts, subscribeToMembers, getMembers } from "@/lib/db-service";
+import { BroadcastRecord, Member } from "@/types";
 
 export default function MessagesPage() {
   const { user } = useAuth();
@@ -23,6 +23,7 @@ export default function MessagesPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [history, setHistory] = useState<BroadcastRecord[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
   // Quick ministry templates
@@ -34,13 +35,18 @@ export default function MessagesPage() {
   ];
 
   useEffect(() => {
-    async function loadData() {
-      setDataLoading(true);
-      const data = await getBroadcasts();
+    setDataLoading(true);
+    const unsubHistory = subscribeToBroadcasts((data) => {
       setHistory(data);
       setDataLoading(false);
-    }
-    loadData();
+    });
+    const unsubMembers = subscribeToMembers((data) => {
+      setMembers(data);
+    });
+    return () => {
+      unsubHistory();
+      unsubMembers();
+    };
   }, []);
 
   if (user?.role === "Member") {
@@ -69,8 +75,10 @@ export default function MessagesPage() {
 
   const charCount = message.length;
   const smsUnits = Math.max(1, Math.ceil(charCount / 160));
+  const verifiedPhonesCount = members.filter(m => m.phone && m.phone.trim() !== "").length;
+  const totalSentSms = history.reduce((sum, item) => sum + Number(item.recipientsCount || 0), 0);
   const estimatedCostPerRecipient = (smsUnits * 0.045);
-  const estimatedTotalCost = (estimatedCostPerRecipient * (targetAudience === "all" ? 1248 : targetAudience === "custom" ? Math.max(1, customNumbers.split(',').length) : 350)).toFixed(2);
+  const estimatedTotalCost = (estimatedCostPerRecipient * (targetAudience === "all" ? Math.max(1, verifiedPhonesCount) : targetAudience === "custom" ? Math.max(1, customNumbers.split(',').length) : Math.max(1, Math.round(verifiedPhonesCount * 0.4)))).toFixed(2);
 
   const handleBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,8 +89,8 @@ export default function MessagesPage() {
     try {
       let recipientNumbers = customNumbers;
       if (targetAudience === "all" || targetAudience === "regular") {
-        const members = await getMembers();
-        const validPhones = members
+        const membersList = members.length > 0 ? members : await getMembers();
+        const validPhones = membersList
           .filter(m => m.phone && m.phone.trim() !== "" && (targetAudience === "all" || m.status === "Regular" || m.status === "Member"))
           .map(m => m.phone);
         if (validPhones.length > 0) {
@@ -160,9 +168,9 @@ export default function MessagesPage() {
             </div>
           </div>
           <div>
-            <p style={{ fontSize: "2rem", fontWeight: 900, color: "#FFFFFF", margin: "0.5rem 0 0" }}>1,603 SMS</p>
+            <p style={{ fontSize: "2rem", fontWeight: 900, color: "#FFFFFF", margin: "0.5rem 0 0" }}>{totalSentSms.toLocaleString()} SMS</p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.78rem", marginTop: "0.8rem", paddingTop: "0.8rem", borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <span style={{ color: "#94A3B8" }}>Delivered this month</span>
+              <span style={{ color: "#94A3B8" }}>Across {history.length} campaigns</span>
               <span style={{ fontWeight: 700, color: "#34D399" }}>99.8% Success Rate</span>
             </div>
           </div>
@@ -176,9 +184,9 @@ export default function MessagesPage() {
             </div>
           </div>
           <div>
-            <p style={{ fontSize: "2rem", fontWeight: 900, color: "#FFFFFF", margin: "0.5rem 0 0" }}>1,248 Members</p>
+            <p style={{ fontSize: "2rem", fontWeight: 900, color: "#FFFFFF", margin: "0.5rem 0 0" }}>{members.length.toLocaleString()} Members</p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.78rem", marginTop: "0.8rem", paddingTop: "0.8rem", borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <span style={{ color: "#94A3B8" }}>Verified Phone Directory</span>
+              <span style={{ color: "#94A3B8" }}>{verifiedPhonesCount} Verified Phones</span>
               <span style={{ fontWeight: 700, color: "#34D399" }}>Active Sync</span>
             </div>
           </div>
@@ -273,7 +281,7 @@ export default function MessagesPage() {
                 onChange={(e) => setTargetAudience(e.target.value)}
                 style={{ width: "100%", padding: "0.85rem 1.25rem", borderRadius: "14px", border: "1px solid #334155", background: "#1E293B", color: "#FFFFFF", fontSize: "0.95rem", fontWeight: 600, outline: "none", cursor: "pointer" }}
               >
-                <option value="all">All Congregation Members (1,248 Verified Phones)</option>
+                <option value="all">All Congregation Members ({verifiedPhonesCount.toLocaleString()} Verified Phones)</option>
                 <option value="Donors & Tithers">Donors & Tithers Only</option>
                 <option value="Volunteer Team">Volunteer Team & Workers</option>
                 <option value="custom">Custom Phone Number(s) List</option>

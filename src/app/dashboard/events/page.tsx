@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, Users, Plus, Filter, Loader2, Sparkles, CheckCircle2, ShieldAlert } from "lucide-react";
 import { ChurchEvent, EventCategory } from "@/types";
-import { getEvents, addEvent } from "@/lib/db-service";
+import { getEvents, addEvent, subscribeToEvents } from "@/lib/db-service";
 import { useAuth } from "@/context/AuthContext";
 
 export default function EventsPage() {
@@ -25,13 +25,12 @@ export default function EventsPage() {
   const [expectedAttendance, setExpectedAttendance] = useState("500");
 
   useEffect(() => {
-    async function loadEvents() {
-      setLoading(true);
-      const data = await getEvents();
+    setLoading(true);
+    const unsub = subscribeToEvents((data) => {
       setEvents(data);
       setLoading(false);
-    }
-    loadEvents();
+    });
+    return () => unsub();
   }, []);
 
   const handleCreateEvent = async (e: React.FormEvent) => {
